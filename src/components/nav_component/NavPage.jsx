@@ -9,10 +9,38 @@ import {
 } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
 import "./NavPage.css";
+import { useEffect, useState } from "react";
 
-export default function NavPage() {
+function NavPage() {
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") === "light" ? "dark" : "light"
+  );
+
+  useEffect(() => {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  const changeTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
+
   return (
-    <div className="bg-white flex flex-col items-center justify-between h-screen py-[3rem] px-[1rem]">
+    <div className="bg-white dark:bg-black flex flex-col items-center justify-between h-screen py-[3rem] px-[1rem]">
       <div className="w-[3rem] h-[3rem]">
         <img src="./img/logo.svg" alt="" />
       </div>
@@ -49,7 +77,10 @@ export default function NavPage() {
         </NavLink>
       </div>
       <div className="text-xl flex flex-col gap-[3rem]">
-        <div className="hover:bg-tertiary p-[1rem] hover:text-primary rounded-[1rem]">
+        <div
+          className="hover:bg-tertiary p-[1rem] hover:text-primary rounded-[1rem]"
+          onClick={changeTheme}
+        >
           <RiMoonLine className="text-xl " />
         </div>
         <div className="hover:bg-tertiary p-[1rem] hover:text-primary rounded-[1rem]">
@@ -59,3 +90,5 @@ export default function NavPage() {
     </div>
   );
 }
+
+export default NavPage;
